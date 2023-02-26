@@ -21,7 +21,7 @@ def main():
                 window_property=window_property
             )
 
-    def rename_all_workspaces_callback(connection: Connection, event: IpcBaseEvent):
+    def rename_changed_workspaces_callback(connection: Connection, event: IpcBaseEvent):
         for workspace in connection.get_tree().workspaces():
             rename_workspace(
                 connection=connection,
@@ -34,8 +34,8 @@ def main():
     i3 = Connection()
     i3.on(Event.WINDOW_TITLE, rename_workspace_callback)
     i3.on(Event.WINDOW_NEW, rename_workspace_callback)
-    i3.on(Event.WINDOW_MOVE, rename_workspace_callback)
-    i3.on(Event.WINDOW_CLOSE, rename_all_workspaces_callback)
+    i3.on(Event.WINDOW_MOVE, rename_changed_workspaces_callback)
+    i3.on(Event.WINDOW_CLOSE, rename_changed_workspaces_callback)
     i3.main()
 
 

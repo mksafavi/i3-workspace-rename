@@ -9,6 +9,10 @@ class WindowProperty(Enum):
     wm_instance = 1
     wm_class = 2
 
+    @classmethod
+    def names(cls):
+        return [n.name for n in cls]
+
 
 def rename_workspace(connection: Connection, rename_command: list[str]):
     connection.command(
@@ -16,7 +20,7 @@ def rename_workspace(connection: Connection, rename_command: list[str]):
     )
 
 
-def get_rename_command(workspace, separator, max_length, window_property):
+def get_rename_command(workspace: Con, separator: str, max_length: int, window_property: WindowProperty) -> list[str]:
     windows_properties = _get_workspace_windows_properties(workspace=workspace)
     windows_names = _get_windows_names(windows_properties=windows_properties, window_property=window_property, max_length=max_length)
     new_name = _create_workspace_name(windows_names=windows_names, separator=separator)
@@ -25,13 +29,14 @@ def get_rename_command(workspace, separator, max_length, window_property):
 
 def _get_workspace_windows_properties(workspace: Iterable[Con]) -> Generator:
     # TODO: add test
+    # TODO: fix crash on workspace=None
     return (
         (str(node.window_title), str(node.window_instance), str(node.window_class))
         for node in workspace if node.window
     )
 
 
-def _get_windows_names(windows_properties: Iterable[tuple], window_property: WindowProperty, max_length: int) -> list:
+def _get_windows_names(windows_properties: Iterable[tuple], window_property: WindowProperty, max_length: int) -> list[str]:
     return [
         _truncate_string(window[window_property.value], max_length=max_length)
         for window in windows_properties
@@ -42,7 +47,7 @@ def _create_workspace_name(windows_names: list, separator: str = ' ') -> str:
     return separator.join(windows_names)
 
 
-def _create_rename_command(number: int, name: str, new_name: str) -> list:
+def _create_rename_command(number: int, name: str, new_name: str) -> list[str]:
     return ['rename', 'workspace', f'"{_escape_double_quote(name)}"', 'to',
             f'"{number}: {_escape_double_quote(new_name)}"']
 

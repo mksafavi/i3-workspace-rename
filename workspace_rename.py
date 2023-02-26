@@ -31,8 +31,7 @@ def _get_workspace_windows_properties(workspace: Iterable[Con]) -> Generator:
     )
 
 
-def _get_windows_names(windows_properties: Iterable[tuple], window_property: WindowProperty,
-                       max_length: int = None) -> list:
+def _get_windows_names(windows_properties: Iterable[tuple], window_property: WindowProperty, max_length: int) -> list:
     return [
         _truncate_string(window[window_property.value], max_length=max_length)
         for window in windows_properties

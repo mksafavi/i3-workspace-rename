@@ -1,0 +1,35 @@
+from i3ipc import Connection, Event
+from i3ipc.events import IpcBaseEvent
+
+from workspace_rename import rename_workspace, get_rename_command, WindowProperty
+
+
+
+def rename_workspace_callback(connection: Connection, event: IpcBaseEvent):
+    workspace = connection.get_tree().find_by_window(event.container.window).workspace()
+    rename_workspace(
+        connection=connection,
+        rename_command=get_rename_command(workspace, separator, window_property)
+    )
+
+
+def rename_all_workspaces_callback(connection: Connection, _: IpcBaseEvent):
+    for workspace in connection.get_tree().workspaces():
+        rename_workspace(
+            connection=connection,
+            rename_command=get_rename_command(workspace, separator, window_property)
+        )
+
+
+if __name__ == '__main__':
+    # TODO: add cli args
+    separator = ' || '
+    window_property_config='wm_name'
+    window_property = WindowProperty[window_property_config]
+
+    i3 = Connection()
+    i3.on(Event.WINDOW_TITLE, rename_workspace_callback)
+    i3.on(Event.WINDOW_NEW, rename_workspace_callback)
+    i3.on(Event.WINDOW_MOVE, rename_workspace_callback)
+    i3.on(Event.WINDOW_CLOSE, rename_all_workspaces_callback)
+    i3.main()

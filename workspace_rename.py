@@ -9,6 +9,10 @@ class WindowProperty(Enum):
     wm_instance = 1
     wm_class = 2
 
+    @classmethod
+    def names(cls):
+        return [n.name for n in cls]
+
 
 def rename_workspace(connection: Connection, rename_command: list[str]):
     connection.command(

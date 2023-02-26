@@ -3,7 +3,7 @@ import argparse
 from i3ipc import Connection, Event
 from i3ipc.events import IpcBaseEvent
 
-from workspace_rename import rename_workspace, get_rename_command, WindowProperty
+from workspace_rename import rename_workspace, WindowProperty
 
 
 def main():
@@ -15,24 +15,20 @@ def main():
         if workspace:
             rename_workspace(
                 connection=connection,
-                rename_command=get_rename_command(
-                    workspace=workspace,
-                    separator=separator,
-                    max_length=max_length,
-                    window_property=window_property
-                )
+                workspace=workspace,
+                separator=separator,
+                max_length=max_length,
+                window_property=window_property
             )
 
     def rename_all_workspaces_callback(connection: Connection, event: IpcBaseEvent):
         for workspace in connection.get_tree().workspaces():
             rename_workspace(
                 connection=connection,
-                rename_command=get_rename_command(
-                    workspace=workspace,
-                    separator=separator,
-                    max_length=max_length,
-                    window_property=window_property
-                )
+                workspace=workspace,
+                separator=separator,
+                max_length=max_length,
+                window_property=window_property
             )
 
     i3 = Connection()

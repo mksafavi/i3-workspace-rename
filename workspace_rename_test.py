@@ -6,7 +6,7 @@ from workspace_rename import \
     _truncate_string, \
     _create_workspace_name, \
     _create_rename_command, \
-    _get_windows_names
+    _get_windows_names, _add_workspace_number_to_name
 
 
 def random_string_generator(length=10) -> str:
@@ -19,14 +19,14 @@ def test_get_windows_names():
     window_classes = [random_string_generator() for _ in range(3)]
     windows_properties = [i for i in zip(window_titles, window_instances, window_classes)]
     assert _get_windows_names(
-        windows_properties=windows_properties, window_property=WindowProperty.wm_name
+        windows_properties=windows_properties, window_property=WindowProperty.wm_name, max_length=100
     ) == window_titles
     assert _get_windows_names(
-        windows_properties=windows_properties, window_property=WindowProperty.wm_instance
+        windows_properties=windows_properties, window_property=WindowProperty.wm_instance, max_length=100
     ) == window_instances
 
     assert _get_windows_names(
-        windows_properties=windows_properties, window_property=WindowProperty.wm_class
+        windows_properties=windows_properties, window_property=WindowProperty.wm_class, max_length=100
     ) == window_classes
 
 
@@ -40,20 +40,24 @@ def test_get_windows_names_must_truncate_names_if_bigger_than_max_length():
     ) == max_length
 
 
-def test_create_rename_workspace_command():
+def test_add_workspace_number_to_name():
     number = random.getrandbits(5)
     name = random_string_generator()
-    new_name = random_string_generator()
-    actual_command = _create_rename_command(number=number, name=name, new_name=new_name)
-    assert actual_command == ['rename', 'workspace', f'"{name}"', 'to', f'"{number}: {new_name}"']
+    assert _add_workspace_number_to_name(number=number, name=name) == f'{number}: {name}'
 
 
 def test_create_rename_workspace_command_must_escape_double_quotes_in_names():
-    number = random.getrandbits(5)
     name = 'abc"def'
     new_name = 'tu"vwx"yz'
-    actual_command = _create_rename_command(number=number, name=name, new_name=new_name)
-    assert actual_command == ['rename', 'workspace', f'"abc\\"def"', 'to', f'"{number}: tu\\"vwx\\"yz"']
+    actual_command = _create_rename_command(name=name, new_name=new_name)
+    assert actual_command == ['rename', 'workspace', f'"abc\\"def"', 'to', f'"tu\\"vwx\\"yz"']
+
+
+def test_create_rename_workspace_command():
+    name = random_string_generator()
+    new_name = random_string_generator()
+    actual_command = _create_rename_command(name=name, new_name=new_name)
+    assert actual_command == ['rename', 'workspace', f'"{name}"', 'to', f'"{new_name}"']
 
 
 def test_create_workspace_name():
@@ -74,6 +78,7 @@ def test_truncate_string_truncates_and_add_three_dots_when_length_bigger_than_ma
     actual_name = _truncate_string(long_data, max_length=max_length)
     assert actual_name == f"ab..."
     assert len(actual_name) == max_length
+
 
 def test_truncate_string_must_not_truncate_when_length_smaller_than_max_length():
     expected_data = random_string_generator(10)

@@ -1,0 +1,38 @@
+image: python:3.10
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  GIT_SUBMODULE_STRATEGY: recursive
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python --version
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r test_requirements.txt
+
+stages:
+  - test
+  - build
+
+test:
+  stage: test
+  script:
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)
+    - python -m pytest --junit-xml=tests_reports.xml ./
+  artifacts:
+    reports:
+      junit: tests_reports.xml
+
+
+build:
+  stage: build
+  script:
+    - echo 'todo'
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

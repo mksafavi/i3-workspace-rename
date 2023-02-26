@@ -63,7 +63,7 @@ def test_create_workspace_name():
     assert workspace_name == f"{windows_names[0]}{separator}{windows_names[1]}"
 
 
-def test_truncate_string_given_no_max_length():
+def test_truncate_string_must_not_truncate_given_no_max_length():
     expected_data = random_string_generator()
     assert _truncate_string(expected_data) == expected_data
 
@@ -74,3 +74,7 @@ def test_truncate_string_truncates_and_add_three_dots_when_length_bigger_than_ma
     actual_name = _truncate_string(long_data, max_length=max_length)
     assert actual_name == f"ab..."
     assert len(actual_name) == max_length
+
+def test_truncate_string_must_not_truncate_when_length_smaller_than_max_length():
+    expected_data = random_string_generator(10)
+    assert _truncate_string(expected_data, max_length=20) == expected_data

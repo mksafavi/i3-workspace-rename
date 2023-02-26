@@ -16,9 +16,9 @@ def rename_workspace(connection: Connection, rename_command: list[str]):
     )
 
 
-def get_rename_command(workspace, separator, window_property):
+def get_rename_command(workspace, separator, max_length, window_property):
     windows_properties = _get_workspace_windows_properties(workspace=workspace)
-    windows_names = _get_windows_names(windows_properties=windows_properties, window_property=window_property)
+    windows_names = _get_windows_names(windows_properties=windows_properties, window_property=window_property, max_length=max_length)
     new_name = _create_workspace_name(windows_names=windows_names, separator=separator)
     return _create_rename_command(number=workspace.num, name=workspace.name, new_name=new_name)
 
@@ -53,7 +53,7 @@ def _escape_double_quote(s):
 
 
 def _truncate_string(data: str, max_length: int = None) -> str:
-    if max_length:
+    if max_length and len(data) > max_length:
         return f"{data[0:max_length - 3]}..."
     else:
         return data

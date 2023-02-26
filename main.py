@@ -12,15 +12,16 @@ def main():
 
     def rename_workspace_callback(connection: Connection, event: IpcBaseEvent):
         workspace = connection.get_tree().find_by_window(event.container.window).workspace()
-        rename_workspace(
-            connection=connection,
-            rename_command=get_rename_command(
-                workspace=workspace,
-                separator=separator,
-                max_length=max_length,
-                window_property=window_property
+        if workspace:
+            rename_workspace(
+                connection=connection,
+                rename_command=get_rename_command(
+                    workspace=workspace,
+                    separator=separator,
+                    max_length=max_length,
+                    window_property=window_property
+                )
             )
-        )
 
     def rename_all_workspaces_callback(connection: Connection, event: IpcBaseEvent):
         for workspace in connection.get_tree().workspaces():

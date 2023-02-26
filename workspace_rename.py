@@ -29,6 +29,7 @@ def get_rename_command(workspace, separator, max_length, window_property):
 
 def _get_workspace_windows_properties(workspace: Iterable[Con]) -> Generator:
     # TODO: add test
+    # TODO: fix crash on workspace=None
     return (
         (str(node.window_title), str(node.window_instance), str(node.window_class))
         for node in workspace if node.window

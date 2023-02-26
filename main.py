@@ -3,7 +3,7 @@ from i3ipc.events import IpcBaseEvent
 
 from workspace_rename import rename_workspace, get_rename_command, WindowProperty
 
-if __name__ == '__main__':
+def main():
     # TODO: add cli args
     separator = ' || '
     max_length = 40
@@ -42,3 +42,6 @@ if __name__ == '__main__':
     i3.on(Event.WINDOW_MOVE, rename_workspace_callback)
     i3.on(Event.WINDOW_CLOSE, rename_all_workspaces_callback)
     i3.main()
+
+if __name__ == '__main__':
+    main()

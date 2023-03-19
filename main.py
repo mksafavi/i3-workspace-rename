@@ -23,13 +23,14 @@ def main():
 
     def rename_changed_workspaces_callback(connection: Connection, event: IpcBaseEvent):
         for workspace in connection.get_tree().workspaces():
-            rename_workspace(
-                connection=connection,
-                workspace=workspace,
-                separator=separator,
-                max_length=max_length,
-                window_property=window_property
-            )
+            if workspace:
+                rename_workspace(
+                    connection=connection,
+                    workspace=workspace,
+                    separator=separator,
+                    max_length=max_length,
+                    window_property=window_property
+                )
 
     i3 = Connection()
     i3.on(Event.WINDOW_TITLE, rename_workspace_callback)
